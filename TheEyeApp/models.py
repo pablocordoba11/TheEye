@@ -15,10 +15,16 @@ class TimeStampBase(models.Model):
 #The session will have related the userExtension that also have the token
 class Session(TimeStampBase):
     user = models.OneToOneField(UserExtension, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user
     
 class EventType(models.Model):
     name = models.CharField(max_length=80, null=False, blank=False)
     description = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
 class Event(TimeStampBase):
     name = models.CharField(max_length=150, null=False, blank=False)

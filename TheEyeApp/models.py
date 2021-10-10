@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+import random
+import string
 
 # Create your models here.
 #This is an extension of the User model that django provided. We need to add more detail to our user, 
@@ -32,8 +34,13 @@ class Event(TimeStampBase):
     session_event = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True, blank=True)
     data = models.JSONField()
 
+
 class Application(models.Model):
+    def default_secret_key():
+        return ''.join(random.sample(string.ascii_letters, 30))
+
     name = models.CharField(max_length=60, null=False, blank=False)
     url = models.CharField(max_length=80, null=False, blank=False)
     description = models.CharField(max_length=150, null=True, blank=True)
     type = models.CharField(max_length=80, null=True, blank=True)
+    app_secret = models.CharField(max_length=30, null=False, blank=False, default=default_secret_key())

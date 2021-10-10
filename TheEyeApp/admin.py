@@ -51,6 +51,7 @@ class UserAdmin(UserAdmin):
 class ApplicationAdministration(admin.ModelAdmin):
     list_display = ('name', 'url', 'description', 'type')
     search_fields = ('name',)
+    readonly_fields=('app_secret',)
 
 class EventTypeAdministration(admin.ModelAdmin):
     list_display = ('name', 'description')

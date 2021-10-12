@@ -43,6 +43,10 @@ After having an idea or different way to resolve the problem, it's important to 
 
 - Implement Token authentication with an url to provide a token to 3rd user to allow to continue using the API
 
+- Implement endpoint to capture user actions
+
+- Handle user sessions
+
 ## Steps to develop the application
 - Install Python 3.9
 
@@ -52,7 +56,7 @@ After having an idea or different way to resolve the problem, it's important to 
 
 - clone the project
 
-	- git clone repo
+	- git clone https://github.com/pablocordoba11/TheEye.git
 
 - cd source
 
@@ -75,4 +79,16 @@ After having an idea or different way to resolve the problem, it's important to 
 	- localhost:8000/admin
 
 - Enjoy it!
+
+
+```mermaid
+
+sequenceDiagram
+
+3rd App ->> The Eye: auth-user-by-app(user, app_secret)
+The Eye ->> 3rd App : token
+3rd App ->> The Eye: track_request(name, type, data)
+Note left of The Eye: The Eye validate the<br/>request and save<br/>the event to be<br/> expose in the Admin
+
+User ->>Eye Admin: Check data in /admin
 

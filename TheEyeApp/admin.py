@@ -61,7 +61,7 @@ class EventTypeInline(admin.TabularInline):
     model = EventType
 
 class EventAdministration(admin.ModelAdmin):
-    list_display = ('name', 'get_type', 'data')
+    list_display = ('name', 'get_type', 'data', 'get_time_stamp')
     search_fields = ('name',)
 
     def get_type(self, obj):
@@ -72,6 +72,15 @@ class EventAdministration(admin.ModelAdmin):
 
     get_type.short_description = 'Type'
     get_type.admin_order_field = 'Type'
+
+    def get_time_stamp(self, obj):
+        if hasattr(obj, 'timestampbase_ptr') and obj.timestampbase_ptr.created_at is not None:
+            return obj.timestampbase_ptr.created_at
+        else:
+            return  ""
+
+    get_time_stamp.short_description = 'Created at'
+    get_time_stamp.admin_order_field = 'Created at'
 
 # Register your models here.
 

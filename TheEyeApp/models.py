@@ -16,7 +16,7 @@ class TimeStampBase(models.Model):
 
 #The session will have related the userExtension that also have the token
 class Session(TimeStampBase):
-    user = models.OneToOneField(UserExtension, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserExtension, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user
@@ -30,10 +30,12 @@ class EventType(models.Model):
 
 class Event(TimeStampBase):
     name = models.CharField(max_length=150, null=False, blank=False)
-    type = models.OneToOneField(EventType, on_delete=models.CASCADE)
-    session_event = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True, blank=True)
+    type = models.ForeignKey(EventType, on_delete=models.CASCADE, related_name='type_set')
+    session_event = models.ForeignKey(Session, on_delete=models.SET_NULL, null=True, blank=True, related_name='session_set')
     data = models.JSONField()
 
+    def __str__(self):
+        return self.name + self.type.name
 
 class Application(models.Model):
     def default_secret_key():
@@ -44,3 +46,6 @@ class Application(models.Model):
     description = models.CharField(max_length=150, null=True, blank=True)
     type = models.CharField(max_length=80, null=True, blank=True)
     app_secret = models.CharField(max_length=30, null=False, blank=False, default=default_secret_key())
+
+    def __str__(self):
+        return self.name

@@ -12,18 +12,23 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token ddbbdd469ac6f5fc40bd03c5f21649867c731311",
+						"value": "Token c0d153fcf91f535c96756b00fa8d0ea95dcabefe",
 						"type": "text"
 					},
 					{
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "X_CSRFTOKEN",
+						"value": "N7nHT3sH2n7tW5XRxeM3DHzR9XfUGeVQ92eRopI4AOTXGgdcET6s4Vl4w0MyxW37",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"name\":\"pageview\",\n   \"category\": \"add Post\",\n   \"data\":{\n      \"host\":\"www.consumeraffairs.com\",\n      \"path\":\"/\"\n   }\n}",
+					"raw": "{\n   \"name\":\"ticoTest\",\n   \"category\": \"add Post\",\n   \"data\":{\n      \"host\":\"www.consumeraffairs.com\",\n      \"path\":\"/\"\n   }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -48,18 +53,25 @@
 		},
 		{
 			"name": "Create Event Type",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token ddbbdd469ac6f5fc40bd03c5f21649867c731311",
-						"type": "text",
-						"disabled": true
+						"value": "Token 858b6b5410d7eb2d63901b758ef721fe1a4eb180",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
 						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X_CSRFTOKEN",
+						"value": "",
 						"type": "text"
 					}
 				],
@@ -96,6 +108,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X_CSRFTOKEN",
+						"value": "CAGGGelLOT1KM3bXbFGgUUHycvQYMSEfjkV0bkpaDkeVzV62rcxJAqQ2d79cG1J2",
 						"type": "text"
 					}
 				],

@@ -62,7 +62,7 @@ class EventTypeInline(admin.TabularInline):
     model = EventType
 
 class EventAdministration(admin.ModelAdmin):
-    list_display = ('name', 'get_type', 'data', 'get_time_stamp')
+    list_display = ('name', 'get_type', 'get_application', 'get_session', 'data', 'get_time_stamp')
     search_fields = ('name',)
 
     def get_type(self, obj):
@@ -74,8 +74,26 @@ class EventAdministration(admin.ModelAdmin):
     get_type.short_description = 'Type'
     get_type.admin_order_field = 'Type'
 
+    def get_application(self, obj):
+        if hasattr(obj, 'application') and obj.application is not None:
+            return obj.application.name
+        else:
+            return  ""
+
+    get_application.short_description = 'Application'
+    get_application.admin_order_field = 'Application'
+
+    def get_session(self, obj):
+        if hasattr(obj, 'session_django') and obj.session_django is not None:
+            return obj.session_django.session_key
+        else:
+            return  ""
+
+    get_session.short_description = 'Session'
+    get_session.admin_order_field = 'Session'
+
     def get_time_stamp(self, obj):
-        if hasattr(obj, 'timestampbase_ptr') and obj.timestampbase_ptr.created_at is not None:
+        if hasattr(obj, 'timestampbase_ptr') and obj.timestampbase_ptr is not None:
             return obj.timestampbase_ptr.created_at
         else:
             return  ""

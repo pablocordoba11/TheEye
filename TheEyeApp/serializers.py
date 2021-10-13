@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.sessions.models import Session as SessionDjango
 from .models import *
 
 class EventTypeSerializer(serializers.Serializer):
@@ -15,10 +16,20 @@ class EventTypeSerializer(serializers.Serializer):
         model= EventType
         fields = ('id', 'name', 'description')
 
+class UserSerializer(serializers.Serializer):
+    username =  serializers.CharField(required=False, allow_blank=True, max_length=80)
+
+    class Meta:
+        model= UserExtension
+        fields = ('id', 'name', 'description')
+
 class EventSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_blank=True, max_length=150)
     type = EventTypeSerializer(many=False)
     data = serializers.JSONField()
+    session = serializers.CharField(required=False, allow_blank=True, max_length=150)
+    application_name = serializers.CharField(required=False, allow_blank=True, max_length=60)
+    user_pk = serializers.CharField(required=False, allow_blank=True, max_length=60)
 
     def cust_validate_type(self, value):
         #Here we'll receive the type as a simple string and we need to look for that EventType name
@@ -33,8 +44,14 @@ class EventSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         event_type = EventType(**validated_data.get("type"))
+        session = SessionDjango.objects.get(session_key=validated_data.get("session"))
+        user =  User.objects.get(pk=validated_data.get("user_pk"))
+        app =  Application.objects.get(name=validated_data.get("application_name"))
         validated_data.pop('type')
-        return Event.objects.create(type=event_type, **validated_data)
+        validated_data.pop('application_name')
+        validated_data.pop('user_pk')
+        validated_data.pop('session')
+        return Event.objects.create(type=event_type,session_django=session,user=user,application=app, **validated_data)
 
     class Meta:
         model= Event

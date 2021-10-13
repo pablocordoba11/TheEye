@@ -10,14 +10,16 @@ from rest_framework import exceptions
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.core.exceptions import ObjectDoesNotExist
 import json 
-from rest_framework.parsers import JSONParser
 from .serializers import *
-from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
+
 
 class get_user_token(ObtainAuthToken):
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -36,22 +38,21 @@ class get_user_token(ObtainAuthToken):
             return HttpResponse({
                 "Application resource not found with the provided app secret"
             }, status=404)
-        
+
         #Here we are also starting the session using the django built-in
         #Here we are saving some data to then asociated with the event model
         request.session['username'] = user.username
         request.session["key"] = token[0].key
         request.session['application'] = applcation.name
         request.session.set_expiry(200)
-        request.session.__setitem__("test", "value")
-        print(str(request.session.get_expiry_age()))
-        
+        request.session.save()        
 
         return Response({
             'token': token[0].key,
             'user_id': user.pk,
             'email': user.email,
             'application': applcation.name,
+            'session': request.session.session_key
         })
 
 
@@ -69,7 +70,12 @@ def track_request(request):
     if request.method == 'POST':
         serializer = EventSerializer(data=request.data)
         type_name = serializer.initial_data["category"]
+
         serializer.initial_data["type"] = serializer.cust_validate_type(type_name)
+        #Here we are getting data from the session
+        serializer.initial_data["session"] = request.session.session_key
+        serializer.initial_data["user_pk"] = request.auth.user.pk
+        serializer.initial_data["application_name"] = request.session['application']
         if serializer.is_valid():
             serializer.save()
             return HttpResponse("Action tracked! you can check the values in /admin")
@@ -95,7 +101,6 @@ def create_event_type(request):
             return HttpResponse("Event Type Added!")
         else:
             return HttpResponse("The date posted is not valid")        
-
 
 def is_token_expired(user):
     token = Token.objects.get(user=user)

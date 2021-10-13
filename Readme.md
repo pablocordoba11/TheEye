@@ -47,7 +47,7 @@ After having an idea or different way to resolve the problem, it's important to 
 
 - Handle user sessions
 
-## Steps to develop the application
+## Steps to install the application
 - Install Python 3.9
 
 - Create a virtual environment (use the same steps tha are described before)
@@ -77,9 +77,15 @@ After having an idea or different way to resolve the problem, it's important to 
 	- Your API should be enable to use it!
 
 	- localhost:8000/admin
+	
+- It is also added to the project the postman project, with that you can see what are the required and format for each end point and also test it!
 
 - Enjoy it!
 
+
+## UML diagrams
+
+	Here is the core use case
 
 ```mermaid
 
@@ -91,4 +97,5 @@ The Eye ->> 3rd App : token
 Note left of The Eye: The Eye validate the<br/>request and save<br/>the event to be<br/> expose in the Admin
 
 User ->>Eye Admin: Check data in /admin
+
 

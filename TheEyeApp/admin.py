@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.sessions.models import Session as SessionDjango
 from .models import *
 
 class UserAdmin(UserAdmin):
@@ -82,6 +83,11 @@ class EventAdministration(admin.ModelAdmin):
     get_time_stamp.short_description = 'Created at'
     get_time_stamp.admin_order_field = 'Created at'
 
+class SessionAdmin(admin.ModelAdmin):
+    def _session_data(self, obj):
+        return obj.get_decoded()
+    list_display = ['session_key', '_session_data', 'expire_date']
+
 # Register your models here.
 
 admin.site.unregister(User)
@@ -89,5 +95,6 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Application, ApplicationAdministration)
 admin.site.register(EventType, EventTypeAdministration)
 admin.site.register(Event, EventAdministration)
+admin.site.register(SessionDjango, SessionAdmin)
 
 

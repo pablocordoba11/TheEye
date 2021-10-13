@@ -88,7 +88,6 @@ After having an idea or different way to resolve the problem, it's important to 
 	Here is the core use case
 
 ```mermaid
-
 sequenceDiagram
 
 3rd App ->> The Eye: auth-user-by-app(user, app_secret)
@@ -97,5 +96,5 @@ The Eye ->> 3rd App : token
 Note left of The Eye: The Eye validate the<br/>request and save<br/>the event to be<br/> expose in the Admin
 
 User ->>Eye Admin: Check data in /admin
-
+```
 

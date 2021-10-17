@@ -67,11 +67,18 @@ def track_request(request):
         return HttpResponse({
                 ex
             }, status=400)
+
     if request.method == 'POST':
         serializer = EventSerializer(data=request.data)
         type_name = serializer.initial_data["category"]
+        type_dict = serializer.cust_validate_type(type_name)
+        serializer.initial_data["type"] = type_dict
 
-        serializer.initial_data["type"] = serializer.cust_validate_type(type_name)
+        needs_required = type_dict.get("need_required_field")
+        required_fields = type_dict.get("required_fields")
+
+        #Here we are doing validation of the payload depending the type
+        validate_payload(needs_required, required_fields, serializer.initial_data["data"])
         #Here we are getting data from the session
         serializer.initial_data["session"] = request.session.session_key
         serializer.initial_data["user_pk"] = request.auth.user.pk
@@ -82,6 +89,12 @@ def track_request(request):
         else:
             return HttpResponse("The date posted is not valid, Here the details: " + str(serializer.errors))
 
+def validate_payload(needs_required, fields_to_validate, payload):
+    if needs_required:
+        required = fields_to_validate.split(",")
+        for req in required:
+            if not req.strip() in payload:
+                raise Exception("Your payload have not all the required fields that the Evend type needs. For: " + fields_to_validate) 
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication, SessionAuthentication])

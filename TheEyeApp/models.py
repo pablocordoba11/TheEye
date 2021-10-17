@@ -25,6 +25,8 @@ class Session(TimeStampBase):
 class EventType(models.Model):
     name = models.CharField(max_length=80, null=False, blank=False)
     description = models.CharField(max_length=100, null=True, blank=True)
+    need_required_field = models.BooleanField(default=False)
+    required_fields = models.CharField(max_length=100, null=True, blank=True,help_text="Required field can be multiples and need to be separated with comma")
 
     def __str__(self):
         return self.name

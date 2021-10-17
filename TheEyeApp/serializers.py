@@ -14,7 +14,7 @@ class EventTypeSerializer(serializers.Serializer):
 
     class Meta:
         model= EventType
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'description', 'need_required_field', 'required_fields')
 
 class UserSerializer(serializers.Serializer):
     username =  serializers.CharField(required=False, allow_blank=True, max_length=80)

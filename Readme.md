@@ -47,6 +47,10 @@ After having an idea or different way to resolve the problem, it's important to 
 
 - Handle user sessions
 
+- Added validation of the payload depending on the event type required fields value
+
+- To handle more requests per second the eye now it is using celery to avoid the blocking I/O
+
 ## Steps to install the application
 - Install Python 3.9
 
@@ -81,6 +85,20 @@ After having an idea or different way to resolve the problem, it's important to 
 - It is also added to the project the postman project, with that you can see what are the required and format for each end point and also test it!
 
 - Enjoy it!
+
+
+## Celery task
+To allow to have multiples requests per second the application is not writing the database in a sync way for every request instead of that, the eye is using a celery task manager to handle that issue.
+Celery is basically adding each request into a queue and processing those in an async way 
+
+We need to run a separate instance for the celery app
+- celery -A CeleryApp.task worker -l INFO
+- http://localhost:15672/#/ 
+ - To Handler the rabitMQ 
+- celery -A CeleryApp flower
+ - This is to monitor the task of celery, there we could check the status of the track calls 
+ - http://localhost:5555/tasks
+
 
 
 ## UML diagrams

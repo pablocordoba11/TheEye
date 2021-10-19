@@ -15,6 +15,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
+from CeleryApp.task import *
 
 
 class get_user_token(ObtainAuthToken):
@@ -66,35 +67,24 @@ def track_request(request):
     except Exception as ex:
         return HttpResponse({
                 ex
-            }, status=400)
-
+            }, status=400)  
     if request.method == 'POST':
-        serializer = EventSerializer(data=request.data)
-        type_name = serializer.initial_data["category"]
-        type_dict = serializer.cust_validate_type(type_name)
-        serializer.initial_data["type"] = type_dict
+        celery_data = {}
+        celery_data["data"] = request.data
+        celery_data["session_key"] = request.session.session_key
+        celery_data["user_pk"] = request.auth.user.pk
+        celery_data["application"] = request.session['application']
 
-        needs_required = type_dict.get("need_required_field")
-        required_fields = type_dict.get("required_fields")
+        result = celery_track_request.delay(json.dumps(celery_data))
 
-        #Here we are doing validation of the payload depending the type
-        validate_payload(needs_required, required_fields, serializer.initial_data["data"])
-        #Here we are getting data from the session
-        serializer.initial_data["session"] = request.session.session_key
-        serializer.initial_data["user_pk"] = request.auth.user.pk
-        serializer.initial_data["application_name"] = request.session['application']
-        if serializer.is_valid():
-            serializer.save()
-            return HttpResponse("Action tracked! you can check the values in /admin")
-        else:
-            return HttpResponse("The date posted is not valid, Here the details: " + str(serializer.errors))
-
+        return HttpResponse("Action added in celery with key " + result.id + "! you can check the values in /admin. If the request fail it will show the errors in the celery log")
+   
 def validate_payload(needs_required, fields_to_validate, payload):
     if needs_required:
         required = fields_to_validate.split(",")
         for req in required:
             if not req.strip() in payload:
-                raise Exception("Your payload have not all the required fields that the Evend type needs. For: " + fields_to_validate) 
+                raise Exception("Your payload have not all the required fields that the Evend type needs. For: " + str(fields_to_validate)) 
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication, SessionAuthentication])
@@ -121,3 +111,4 @@ def is_token_expired(user):
     if time_living.seconds > settings.TOKEN_EXPIRATION:
         token.delete()
         raise Exception("Your token is expired! please re-generate it and try again!") 
+
